@@ -1,12 +1,14 @@
-// import express from "express";
-const { default: axios } = require("axios");
-const express = require("express");
-const router = express.Router();
-const mongoose = require("mongoose");
+import express from "express";
+import mongoose from "mongoose";
+// const { default: axios } = require("axios");
+// const express = require("express");
+// const mongoose = require("mongoose");
+
+const userRouter = express.Router();
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-router.post("/signup", (req, res) => {
+userRouter.post("/signup", (req, res) => {
   const {
     body: { username, password },
   } = req;
@@ -14,18 +16,22 @@ router.post("/signup", (req, res) => {
   res.send({ username: "헬로!!", createdAt: "123" });
 });
 
-router.post("/signin", (req, res) => {
+userRouter.post("/signin", (req, res) => {
   const {
     body: { username, password },
   } = req;
   console.log("리퀘에용", username, password);
 
   const Cat = mongoose.model("Cat", { name: String });
+  // const kitty = new Cat({ name: "땅땅이입니다람쥐" });
 
-  const kitty = new Cat({ name: "땅땅이" });
-  kitty.save().then((r) => console.log("meow", r));
-  res.send({ username: "헬로!!", createdAt: "123" });
+  // kitty.save().then((r) => console.log("meow", r));
+
+  Cat.findOne({ name: "땅땅이입니다람쥐" }).then((r) =>
+    console.log("미야옹", r)
+  );
+  res.send({ username: "헬로!!", createdAt: "1234" });
 });
 
-// export default router;
-module.exports = router;
+export default userRouter;
+// module.exports = router;
