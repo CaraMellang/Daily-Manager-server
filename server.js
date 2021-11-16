@@ -3,9 +3,22 @@
 const express = require("express");
 const cors = require("cors");
 const signIn = require("./routes/auth");
+const MongoClient = require("mongodb").MongoClient;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 
 const app = express();
 const route = express.Router();
+
+mongoose
+  .connect("mongodb://localhost:27017/todo-app")
+  .then((res) => {
+    console.log("Connect!!", res);
+  })
+  .catch((e) => {
+    console.log("ConnectError!", e);
+  });
 
 let corsOption = {
   origin: "http://localhost:3000",
