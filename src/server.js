@@ -27,7 +27,7 @@ let corsOption = {
   optionsSuccessStatus: 200,
 };
 
-//Express 4.x버전에는 body-parser모듈 내장
+//Express 4.x버전부터 body-parser모듈 내장
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
