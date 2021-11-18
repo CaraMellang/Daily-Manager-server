@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import { signUpUser } from "../models/SignupUser.js";
+import promisify from "util";
 // const { default: axios } = require("axios");
 // const express = require("express");
 // const mongoose = require("mongoose");
