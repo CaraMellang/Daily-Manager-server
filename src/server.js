@@ -31,7 +31,6 @@ let corsOption = {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 app.use("/auth", cors(corsOption), userRouter);
 
 const port = 5000; //노드 서버가 사용할 포트

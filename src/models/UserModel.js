@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { userSchema } from "../schema/user";
+import { userSchema } from "../schema/user.js";
 
 const saltRounds = 8; //salt 돌리는 횟수.(hasing 랜덤하게)
 
