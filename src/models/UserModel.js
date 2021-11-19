@@ -8,7 +8,7 @@ const saltRounds = 8; //salt 돌리는 횟수.(hasing 랜덤하게)
 // const Schema = mongoose.Schema;
 // const ObjectId = Schema.ObjectId;
 
-export const signUpUser = () => {
+export const userModel = () => {
   // const userSchema = new mongoose.Schema({
   //   name: { type: String },
   //   email: { type: String },

@@ -1,7 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
-import { signUpUser } from "../models/SignupUser.js";
-const userModel = signUpUser();
+// import { signUpUser } from "../models/SignupUser.js";
+import { userModel } from "../models/UserModel";
+const userModel = userModel();
 // const { default: axios } = require("axios");
 // const express = require("express");
 // const mongoose = require("mongoose");
@@ -10,9 +11,9 @@ const userRouter = express.Router();
 
 userRouter.post("/signup", (req, res) => {
   const {
-    body: { username, password },
+    body: { username, email, password },
   } = req;
-  const email = username + "test@test.com";
+  // const email = username + "test@test.com";
   const currDate = new Date();
   console.log("사인업이에용", username, password);
   const User = new userModel({
@@ -40,16 +41,17 @@ userRouter.post("/signup", (req, res) => {
 
 userRouter.post("/signin", (req, res) => {
   const {
-    body: { username, password },
+    body: { username, email, password },
   } = req;
-  console.log("리퀘에용", username, password);
+  console.log("사인인", email, username, password);
 
-  const Cat = mongoose.model("Cat", { name: String, created: Date });
-  // const kitty = new Cat({ name: "땅땅이입니다람쥐" });
+  // const Cat = mongoose.model("Cat", { name: String, created: Date });
+  // // const kitty = new Cat({ name: "땅땅이입니다람쥐" });
 
-  // kitty.save().then((r) => console.log("meow", r));
+  // // kitty.save().then((r) => console.log("meow", r));
 
-  Cat.findOne({ name: "땅땅이" }).then((r) => console.log("미야옹", r));
+  // Cat.findOne({ name: "땅땅이" }).then((r) => console.log("미야옹", r));
+
   res.send({ username: "헬로!!", createdAt: "1234" });
 });
 
