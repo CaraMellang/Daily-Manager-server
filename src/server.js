@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import userRouter from "./routes/auth.js";
 import mongoose from "mongoose";
+// import dotenv from "dotenv";
+// dotenv.config(); //.env 사용
 // const express = require("express");
 // const cors = require("cors");
 // const signIn = require("./routes/auth");

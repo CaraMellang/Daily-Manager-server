@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-// import { signUpUser } from "../models/SignupUser.js";
+import jwt from "../lib/jwt-utill.js";
 import { userModel as userSignModel } from "../models/UserModel.js";
 const userModel = userSignModel();
 // const { default: axios } = require("axios");
@@ -60,12 +60,22 @@ userRouter.post("/signin", (req, res, next) => {
         console.log("컴페어 패스워트", comparedPassword);
         if (comparedPassword) {
           console.log("완료단");
-          return res.status(200).send({ status: 200, msg: "Success signin" });
+          const accessToken = jwt.sign({ username, email });
+
+          return res.status(200).send({
+            status: 200,
+            msg: "Success signin",
+            data: {
+              username: r.name,
+              createdAt: r.createdAt,
+              accessToken,
+            },
+          });
         } else {
           console.log("노일치");
           return res
-            .status(404)
-            .send({ status: 404, msg: "Passwords do not match." });
+            .status(401)
+            .send({ status: 401, msg: "Passwords do not match." });
         }
       }
     })
@@ -100,5 +110,21 @@ userRouter.post("/signin", (req, res, next) => {
   // Cat.findOne({ name: "땅땅이" }).then((r) => console.log("미야옹", r));
 });
 
+userRouter.post("/verify", function (req, res, next) {
+  const splitArray = req.headers.authorization.split(` `);
+  const token = splitArray[1];
+  console.log(splitArray[1]);
+  const result = jwt.verify(token);
+  if (result.ok) {
+    res.status(200).send({
+      status: 200,
+      msg: "Signin Success",
+      data: { email: result.email, username: result.username },
+    });
+  } else {
+    res.status(401).send({ status: 401, msg: result.message });
+  }
+  console.log(result);
+});
 export default userRouter;
 // module.exports = router;
