@@ -69,6 +69,7 @@ userRouter.post("/signin", (req, res, next) => {
               username: r.name,
               createdAt: r.createdAt,
               accessToken,
+              todos: r.todos,
             },
           });
         } else {
