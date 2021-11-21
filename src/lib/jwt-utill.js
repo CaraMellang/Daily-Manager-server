@@ -2,7 +2,7 @@ import { promisify } from "util";
 import jwt from "jsonwebtoken";
 const secret = "sseecc";
 // const secret = process.env.SECRET;
-const time = 1000 * 60 * 10; //10분
+// const time = 1000 * 60 * 10; //10분
 
 export default {
   sign: (user) => {
@@ -17,7 +17,7 @@ export default {
     return jwt.sign(payload, secret, {
       // secret으로 sign하여 발급하고 return
       algorithm: "HS256", // 암호화 알고리즘
-      expiresIn: time, // 유효기간
+      expiresIn: "1m", // 유효기간
       // expiresIn: "1h", // 유효기간
     });
   },
@@ -26,6 +26,7 @@ export default {
     let decoded = null;
     try {
       decoded = jwt.verify(token, secret);
+      console.log("디코디드", decoded);
       return {
         ok: true,
         email: decoded.email,

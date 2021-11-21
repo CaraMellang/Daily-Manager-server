@@ -8,7 +8,7 @@ const saltRounds = 8; //salt 돌리는 횟수.(hasing 랜덤하게)
 // const Schema = mongoose.Schema;
 // const ObjectId = Schema.ObjectId;
 
-export const userModel = () => {
+const userModel = () => {
   // const userSchema = new mongoose.Schema({
   //   name: { type: String },
   //   email: { type: String },
@@ -42,9 +42,11 @@ export const userModel = () => {
         });
       });
     } else {
-      next(); //바로save로감? 아닌듯
+      next(); //바로save로감? 아닌듯 => 2021.11.18일 추가) 몽구즈의 미들웨어라서 save전에 실행되기에 next를 써줘야함.
     }
   });
 
   return mongoose.model("users", userSchema);
 };
+
+export default userModel
