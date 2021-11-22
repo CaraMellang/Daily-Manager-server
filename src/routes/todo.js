@@ -29,6 +29,15 @@ todoRouter.post("/create", function (req, res, next) {
       });
       Todo.save().then((rr) => {
         console.log("앙저장", rr);
+        userModel
+          .updateOne(
+            { _id: r._id },
+            { $push: { todos: { todoId: rr._id, todo: rr.todo } } }
+          )
+          .then((asd) => {
+            console.log("실행왈료", asd);
+          })
+          .catch((ee) => console.log("ㅇ이ㅣ이잉", ee));
         res.send("저장띠");
         next();
       });
@@ -44,7 +53,6 @@ todoRouter.post("/create", function (req, res, next) {
   //     console.log(r);
   //     res.send(r);
   //   });
-  res.send("ㅎㅇ");
 });
 
 export default todoRouter;

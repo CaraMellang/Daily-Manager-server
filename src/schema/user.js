@@ -8,6 +8,19 @@ export const userSchema = new Mongoose.Schema({
   name: { type: String },
   email: { type: String },
   password: { type: String },
+  todos: [
+    {
+      _id: false,
+      todoId: {
+        type: Mongoose.Types.ObjectId,
+        unique: true,
+        index: true,
+        required: true,
+        ref: "todos",
+      },
+      todo: { type: String },
+    },
+  ],
   // todos: [{ type: Mongoose.Types.ObjectId, ref: "todos" }],
   createdAt: { type: Date },
 });
