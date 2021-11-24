@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "../lib/jwt-utill.js";
+import jwt from "../utils/jwt-utill.js";
 import rootModels from "../models/RootModels.js";
 const userModel = rootModels.userModel();
 // const { default: axios } = require("axios");
@@ -23,21 +23,26 @@ userRouter.post("/signup", (req, res) => {
     password,
     createdAt: currDate,
   });
-  userModel.findOne({ email: email }).then((response) => {
-    if (response != null) {
-      console.log("이미 있는 이메일 입니다.");
-      res.send({ status: 400, message: "invailed email!" });
-      throw Error("이미있습니다!");
-    }
-    try {
-      User.save();
-      console.log("저장완료");
-      res.send({ status: 200, message: "success" });
-    } catch (e) {
-      console.log("저장에러", e);
-      res.send({ status: false, message: "save error" });
-    }
-  });
+  userModel
+    .findOne({ email: email })
+    .then((response) => {
+      if (response != null) {
+        console.log("이미 있는 이메일 입니다.");
+        res.status(400).send({ status: 400, message: "invailed email!" });
+        throw Error("이미있습니다!");
+      }
+      try {
+        User.save();
+        console.log("저장완료");
+        res.status(200).send({ status: 200, message: "success" });
+      } catch (e) {
+        console.log("저장에러", e);
+        res.status(403).send({ status: false, message: "save error" });
+      }
+    })
+    .catch((e) => {
+      console.log("사인업 findOne Error", e);
+    });
 });
 
 userRouter.post("/signin", (req, res, next) => {
@@ -70,6 +75,7 @@ userRouter.post("/signin", (req, res, next) => {
               createdAt: r.createdAt,
               accessToken,
               todos: r.todos,
+              userId: r._id,
             },
           });
         } else {

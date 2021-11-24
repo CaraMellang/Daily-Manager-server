@@ -1,7 +1,9 @@
 import express from "express";
 import Mongoose from "mongoose";
-import jwt from "../lib/jwt-utill.js";
+import jwt from "../utils/jwt-utill.js";
+import dayjs from "dayjs";
 import RootModels from "../models/RootModels.js";
+
 const userModel = RootModels.userModel();
 
 const todoModel = RootModels.todoModel();
@@ -40,7 +42,9 @@ todoRouter.post("/create", function (req, res, next) {
         todoModel
           .findOne({ _id: rr._id })
           .populate("creatorId")
-          .then((rss) => console.log("사랑해", rss)) //참조 완료!!
+          .then((rss) => {
+            console.log("사랑해", rss);
+          }) //참조 완료!!
           .catch((pope) => console.log("사랑하는데 에레양", pope));
         res.status(200).send({ data: rr, msg: "완료" });
         next();
@@ -57,6 +61,69 @@ todoRouter.post("/create", function (req, res, next) {
   //     console.log(r);
   //     res.send(r);
   //   });
+});
+
+todoRouter.get("/read", function (req, res, next) {
+  const {
+    body: { token, userId },
+  } = req;
+
+  const result = jwt.verify(token);
+  if (!result.ok) {
+    res.status(401).send({ status: 401, msg: result.message });
+  }
+  todoModel
+    .find({ creatorId: userId })
+    .populate("creatorId")
+    .then((r) => {
+      console.log(`배열길이 ${r.length}`);
+      console.log("아이아잉", r[0].createdAt);
+      console.log("아이아잉", r[0].createdAt.getUTCDay());
+
+      res.status(200).send({ status: 200, msg: "찾기 완료", data: r });
+    })
+    .catch((e) => {
+      console.log("read.find 파인드에러", e);
+    });
+});
+todoRouter.patch("/update", function (req, res, next) {
+  const {
+    body: { token, todoId, todo },
+  } = req;
+
+  todoModel
+    .updateOne({ _id: todoId }, { $set: { todo: todo } })
+    .then((r) => {
+      console.log("실행완료", r);
+      res
+        .status(200)
+        .send({ status: 200, msg: "성공적으로 업데이트 하였습니다", data: r });
+    })
+    .catch((e) => {
+      console.log("에러", e);
+    });
+});
+todoRouter.delete("/delete", function (req, res, next) {
+  const {
+    body: { token, todoId },
+  } = req;
+
+  const result = jwt.verify(token);
+  if (!result.ok) {
+    res.status(401).send({ status: 401, msg: result.message });
+  }
+  todoModel
+    .deleteOne({ _id: todoId })
+    .then((r) => {
+      console.log("삭제완료");
+      res
+        .status(200)
+        .send({ status: 200, msg: "삭제 완료되었습니다", data: r });
+    })
+    .catch((e) => {
+      console.log("error", e);
+      next();
+    });
 });
 
 export default todoRouter;
