@@ -91,8 +91,17 @@ todoRouter.patch("/update", function (req, res, next) {
     body: { token, todoId, todo },
   } = req;
 
+  const result = jwt.verify(token);
+  if (!result.ok) {
+    res.status(401).send({ status: 401, msg: result.message });
+  }
+
+  const date = new Date();
+  const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+  const curr = new Date(utc);
+
   todoModel
-    .updateOne({ _id: todoId }, { $set: { todo: todo } })
+    .updateOne({ _id: todoId }, { $set: { todo: todo, updatedAt: curr } })
     .then((r) => {
       console.log("실행완료", r);
       res
