@@ -15,13 +15,15 @@ userRouter.post("/signup", (req, res) => {
     body: { username, email, password },
   } = req;
   // const email = username + "test@test.com";
-  const currDate = new Date();
-  console.log("사인업이에용", username, password);
+  const date = new Date();
+  const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+  const curr = new Date(utc);
+  console.log("사인업이에용", email, username, password);
   const User = new userModel({
     name: username,
     email,
     password,
-    createdAt: currDate,
+    createdAt: curr,
   });
   userModel
     .findOne({ email: email })
@@ -71,6 +73,7 @@ userRouter.post("/signin", (req, res, next) => {
             status: 200,
             msg: "Success signin",
             data: {
+              email: r.email,
               username: r.name,
               createdAt: r.createdAt,
               accessToken,

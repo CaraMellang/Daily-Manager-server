@@ -10,7 +10,7 @@ export default {
     const payload = {
       // access token에 들어갈 payload
       email: user.email,
-      username: user.username,
+      username: user.name,
       //   role: user.role,
     };
 

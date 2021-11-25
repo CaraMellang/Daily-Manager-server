@@ -25,9 +25,13 @@ todoRouter.post("/create", function (req, res, next) {
     .then((r) => {
       console.log("유저 오브젝트 아이디", r._id.toString());
       //   new Mongoose.Types.ObjectId()
+      const date = new Date();
+      const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+      const curr = new Date(utc);
       const Todo = new todoModel({
         creatorId: r._id,
         todo,
+        createdAt: curr,
       });
       Todo.save().then((rr) => {
         // userModel
