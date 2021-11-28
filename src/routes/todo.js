@@ -90,6 +90,42 @@ todoRouter.get("/read", function (req, res, next) {
       console.log("read.find 파인드에러", e);
     });
 });
+
+todoRouter.post("/findcurrmonth", function (req, res, next) {
+  const {
+    body: { userId, year, month, date },
+  } = req;
+
+  const newDate = new Date();
+  const utc = newDate.getTime() + newDate.getTimezoneOffset() * -1 * 60 * 1000;
+  const curr = new Date(utc);
+  console.log("curr", curr, month);
+  curr.setUTCMonth(month + 1);
+  console.log("curr", curr);
+  console.log("아니", userId, year, curr.getUTCMonth(), month, date);
+  todoModel
+    .find({ creatorId: userId })
+    .then((rr) => {
+      // console.log(rr);
+      const dataArray = [];
+      rr.forEach((arr) => {
+        if (arr.createdAt.getUTCMonth() + 1 === month) {
+          console.log(typeof arr.createdAt);
+          dataArray.push(arr);
+        }
+      });
+      console.log("dataArray", dataArray);
+      return res
+        .status(200)
+        .send({ status: 200, msg: "완료띠", data: dataArray });
+    })
+    .catch((e) => {
+      console.log(e);
+      return res.status(404).send({ status: 400, msg: "Oh 에리임 아무튼에러" });
+    });
+  // res.status(200).send({ status: 200, msg: "gg" });
+});
+
 todoRouter.patch("/update", function (req, res, next) {
   const {
     body: { token, todoId, todo },
@@ -116,6 +152,32 @@ todoRouter.patch("/update", function (req, res, next) {
       console.log("에러", e);
     });
 });
+
+todoRouter.patch(`/updatesuc`, function (req, res, next) {
+  const {
+    body: { token, todoId, success },
+  } = req;
+  const result = jwt.verify(token);
+  if (!result.ok) {
+    res.status(401).send({ status: 401, msg: result.message });
+  }
+
+  const date = new Date();
+  const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+  const curr = new Date(utc);
+  todoModel
+    .updateOne({ _id: todoId }, { $set: { success: !success, updatedAt: curr } })
+    .then((r) => {
+      console.log("실행완료", r);
+      res
+        .status(200)
+        .send({ status: 200, msg: "성공적으로 업데이트 하였습니다", data: r });
+    })
+    .catch((e) => {
+      console.log("에러", e);
+    });
+});
+
 todoRouter.delete("/delete", function (req, res, next) {
   const {
     body: { token, todoId },
