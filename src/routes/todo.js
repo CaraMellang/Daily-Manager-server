@@ -126,7 +126,7 @@ todoRouter.post("/findcurrmonth", function (req, res, next) {
   // res.status(200).send({ status: 200, msg: "gg" });
 });
 
-todoRouter.patch("/update", function (req, res, next) {
+todoRouter.patch("/updatetodo", function (req, res, next) {
   const {
     body: { token, todoId, todo },
   } = req;
@@ -166,7 +166,10 @@ todoRouter.patch(`/updatesuc`, function (req, res, next) {
   const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
   const curr = new Date(utc);
   todoModel
-    .updateOne({ _id: todoId }, { $set: { success: !success, updatedAt: curr } })
+    .updateOne(
+      { _id: todoId },
+      { $set: { success: !success, updatedAt: curr } }
+    )
     .then((r) => {
       console.log("실행완료", r);
       res
