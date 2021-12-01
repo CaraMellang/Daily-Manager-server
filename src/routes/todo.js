@@ -11,7 +11,7 @@ const todoRouter = express.Router();
 
 todoRouter.post("/create", function (req, res, next) {
   const {
-    body: { token, todo },
+    body: { token, todo  },
   } = req;
   let email = "";
   const result = jwt.verify(token);
@@ -67,10 +67,11 @@ todoRouter.post("/create", function (req, res, next) {
   //   });
 });
 
-todoRouter.get("/read", function (req, res, next) {
+todoRouter.post("/read", function (req, res, next) {
   const {
     body: { token, userId },
   } = req;
+  console.log(token, userId)
 
   const result = jwt.verify(token);
   if (!result.ok) {
@@ -81,8 +82,8 @@ todoRouter.get("/read", function (req, res, next) {
     .populate("creatorId")
     .then((r) => {
       console.log(`배열길이 ${r.length}`);
-      console.log("아이아잉", r[0].createdAt);
-      console.log("아이아잉", r[0].createdAt.getUTCDay());
+      // console.log("아이아잉", r[0].createdAt);
+      // console.log("아이아잉", r[0].createdAt.getUTCDay());
 
       res.status(200).send({ status: 200, msg: "찾기 완료", data: r });
     })
@@ -128,9 +129,8 @@ todoRouter.post("/findcurrmonth", function (req, res, next) {
 
 todoRouter.patch("/updatetodo", function (req, res, next) {
   const {
-    body: { token, todoId, todo },
+    body: { token, todoId, todo, success },
   } = req;
-
   const result = jwt.verify(token);
   if (!result.ok) {
     res.status(401).send({ status: 401, msg: result.message });
@@ -141,7 +141,10 @@ todoRouter.patch("/updatetodo", function (req, res, next) {
   const curr = new Date(utc);
 
   todoModel
-    .updateOne({ _id: todoId }, { $set: { todo: todo, updatedAt: curr } })
+    .updateOne(
+      { _id: todoId },
+      { $set: { todo: todo, success: success, updatedAt: curr } }
+    )
     .then((r) => {
       console.log("실행완료", r);
       res
