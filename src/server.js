@@ -16,8 +16,10 @@ const ObjectId = Schema.ObjectId;
 const app = express();
 const route = express.Router();
 
+const mongoUrl = process.env.DBURL;
+
 mongoose
-  .connect("mongodb://localhost:27017/todo-app")
+  .connect(mongoUrl)
   .then((res) => {
     console.log("Connect!!");
   })
@@ -39,8 +41,6 @@ app.use("/todo", cors(corsOption), todoRouter);
 
 const port = process.env.PORT || 5000; //노드 서버가 사용할 포트
 app.listen(port, () => console.log(`Listening on port ${port}`));
-
-
 
 // "scripts": {
 //   "test": "echo \"Error: no test specified\" && exit 1",

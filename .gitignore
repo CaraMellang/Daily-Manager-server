@@ -22,3 +22,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# heroku 배포시 해당파일들은 오류남
+package-lock.json
+yarn.lock
