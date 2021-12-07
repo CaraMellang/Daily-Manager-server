@@ -3,8 +3,8 @@ import cors from "cors";
 import userRouter from "./routes/auth.js";
 import mongoose from "mongoose";
 import todoRouter from "./routes/todo.js";
-// import dotenv from "dotenv";
-// dotenv.config(); //.env 사용
+import dotenv from "dotenv";
+dotenv.config(); //.env 사용
 // const express = require("express");
 // const cors = require("cors");
 // const signIn = require("./routes/auth");
@@ -38,4 +38,4 @@ app.use("/auth", cors(corsOption), userRouter);
 app.use("/todo", cors(corsOption), todoRouter);
 
 const port = 5000; //노드 서버가 사용할 포트
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(process.env.PORT, () => console.log(`Listening on port ${port}`));

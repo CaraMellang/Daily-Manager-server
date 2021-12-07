@@ -1,6 +1,8 @@
 import { promisify } from "util";
 import jwt from "jsonwebtoken";
-const secret = "sseecc";
+import dotenv from "dotenv";
+dotenv.config(); //.env 사용
+const secret = process.env.SECRET;
 // const secret = process.env.SECRET;
 // const time = 1000 * 60 * 10; //10분
 

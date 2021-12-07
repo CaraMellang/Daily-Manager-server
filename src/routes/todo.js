@@ -11,7 +11,7 @@ const todoRouter = express.Router();
 
 todoRouter.post("/create", function (req, res, next) {
   const {
-    body: { token, todo  },
+    body: { token, todo },
   } = req;
   let email = "";
   const result = jwt.verify(token);
@@ -71,7 +71,7 @@ todoRouter.post("/read", function (req, res, next) {
   const {
     body: { token, userId },
   } = req;
-  console.log(token, userId)
+  console.log(token, userId);
 
   const result = jwt.verify(token);
   if (!result.ok) {
@@ -192,19 +192,20 @@ todoRouter.delete("/delete", function (req, res, next) {
   const result = jwt.verify(token);
   if (!result.ok) {
     res.status(401).send({ status: 401, msg: result.message });
+  } else {
+    todoModel
+      .deleteOne({ _id: todoId })
+      .then((r) => {
+        console.log("삭제완료");
+        res
+          .status(200)
+          .send({ status: 200, msg: "삭제 완료되었습니다", data: r });
+      })
+      .catch((e) => {
+        console.log("error", e);
+        next();
+      });
   }
-  todoModel
-    .deleteOne({ _id: todoId })
-    .then((r) => {
-      console.log("삭제완료");
-      res
-        .status(200)
-        .send({ status: 200, msg: "삭제 완료되었습니다", data: r });
-    })
-    .catch((e) => {
-      console.log("error", e);
-      next();
-    });
 });
 
 export default todoRouter;
