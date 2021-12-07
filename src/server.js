@@ -37,5 +37,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/auth", cors(corsOption), userRouter);
 app.use("/todo", cors(corsOption), todoRouter);
 
-const port = 5000; //노드 서버가 사용할 포트
-app.listen(process.env.PORT, () => console.log(`Listening on port ${port}`));
+const port = process.env.PORT || 5000; //노드 서버가 사용할 포트
+app.listen(port, () => console.log(`Listening on port ${port}`));
