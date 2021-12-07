@@ -39,3 +39,10 @@ app.use("/todo", cors(corsOption), todoRouter);
 
 const port = process.env.PORT || 5000; //노드 서버가 사용할 포트
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
+
+
+// "scripts": {
+//   "test": "echo \"Error: no test specified\" && exit 1",
+//   "start": "nodemon --experimental-modules --es-module-specifier-resolution=node index.js"
+// },
