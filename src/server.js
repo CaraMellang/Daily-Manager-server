@@ -17,7 +17,7 @@ const app = express();
 const route = express.Router();
 
 const mongoUrl = process.env.DBURL;
-console.log(mongoUrl)
+console.log(mongoUrl);
 
 mongoose
   .connect(mongoUrl)
@@ -25,11 +25,11 @@ mongoose
     console.log("Connect!!");
   })
   .catch((e) => {
-    console.log("ConnectError!",e);
+    console.log("ConnectError!", e);
   });
 
 let corsOption = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", `https://project-dm.netlify.app/`],
   optionsSuccessStatus: 200,
 };
 
