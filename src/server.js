@@ -17,6 +17,7 @@ const app = express();
 const route = express.Router();
 
 const mongoUrl = process.env.DBURL;
+console.log(mongoUrl)
 
 mongoose
   .connect(mongoUrl)
