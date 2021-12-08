@@ -25,7 +25,7 @@ mongoose
     console.log("Connect!!");
   })
   .catch((e) => {
-    console.log("ConnectError!");
+    console.log("ConnectError!",e);
   });
 
 let corsOption = {
