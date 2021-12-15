@@ -17,6 +17,7 @@ const app = express();
 const route = express.Router();
 
 const mongoUrl = process.env.DBURL;
+// const mongoUrl ="mongodb://localhost:27017/todo-app";
 console.log(mongoUrl);
 
 mongoose

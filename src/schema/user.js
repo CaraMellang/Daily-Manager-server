@@ -9,7 +9,7 @@ export const userSchema = new Mongoose.Schema({
   email: {
     type: String,
     required: true,
-    // match: /.+\@.+@..+/, //email 패턴이 아니면 저장 X => 수정필요
+    match: /.+\@.+\..+/, //email 패턴이 아니면 저장 X => 수정필요  //이게맞는지 모르겠음..
   },
   password: { type: String },
   // todos: [
