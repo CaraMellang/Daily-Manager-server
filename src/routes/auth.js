@@ -4,9 +4,6 @@ import bcrypt from "bcrypt";
 import jwt from "../utils/jwt-utill.js";
 import rootModels from "../models/RootModels.js";
 const userModel = rootModels.userModel();
-// const { default: axios } = require("axios");
-// const express = require("express");
-// const mongoose = require("mongoose");
 
 const userRouter = express.Router();
 
@@ -14,11 +11,9 @@ userRouter.post("/signup", (req, res) => {
   const {
     body: { username, email, password },
   } = req;
-  // const email = username + "test@test.com";
   const date = new Date();
   const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
   const curr = new Date(utc);
-  console.log("사인업이에용", email, username, password);
   const User = new userModel({
     name: username,
     email,
@@ -51,22 +46,18 @@ userRouter.post("/signin", (req, res, next) => {
   const {
     body: { username, email, password },
   } = req;
-  console.log("사인인", email, username, password);
   userModel
     .findOne({ email })
     .then(async (r) => {
       console.log(r);
       if (!r) {
-        console.log("없어임마");
         return res.status(404).send({ status: 404, msg: "Email not found" });
       } else {
         const comparedPassword = await bcrypt.compare(
           password.toString(),
           r.password
         );
-        console.log("컴페어 패스워트", comparedPassword);
         if (comparedPassword) {
-          console.log("완료단");
           const accessToken = jwt.sign({ username, email });
 
           return res.status(200).send({
@@ -82,7 +73,6 @@ userRouter.post("/signin", (req, res, next) => {
             },
           });
         } else {
-          console.log("노일치");
           return res
             .status(401)
             .send({ status: 401, msg: "Passwords do not match." });
@@ -93,31 +83,6 @@ userRouter.post("/signin", (req, res, next) => {
       console.log(e);
       next();
     });
-  // console.log(userEmail);
-  // if (!userEmail) {
-  //   return res.send({ status: 404, message: "Email not found!!" });
-  //   next();
-  // } else {
-  //   console.log("ㅎㅇ");
-  // }
-
-  // const comparedPassword = await bcrypt.compare(
-  //   password.toString(),
-  //   userEmail.password
-  // );
-  // console.log("컴페어 패스워트", comparedPassword);
-  // if (comparedPassword) {
-  //   return res.send({ status: 200, message: "로그인완료" });
-  // } else {
-  //   return res.send({ status: 404, message: "아이디가 일치하지 않습니다." });
-  // }
-
-  // const Cat = mongoose.model("Cat", { name: String, created: Date });
-  // // const kitty = new Cat({ name: "땅땅이입니다람쥐" });
-
-  // // kitty.save().then((r) => console.log("meow", r));
-
-  // Cat.findOne({ name: "땅땅이" }).then((r) => console.log("미야옹", r));
 });
 
 userRouter.post("/verify", function (req, res, next) {
