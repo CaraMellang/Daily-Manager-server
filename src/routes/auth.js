@@ -44,7 +44,7 @@ userRouter.post("/signup", (req, res) => {
 
 userRouter.post("/signin", (req, res, next) => {
   const {
-    body: { username, email, password },
+    body: { email, password },
   } = req;
   userModel
     .findOne({ email })
@@ -58,7 +58,10 @@ userRouter.post("/signin", (req, res, next) => {
           r.password
         );
         if (comparedPassword) {
-          const accessToken = jwt.sign({ username, email });
+          const accessToken = jwt.sign({
+            name: r.name,
+            email,
+          });
 
           return res.status(200).send({
             status: 200,
@@ -68,7 +71,6 @@ userRouter.post("/signin", (req, res, next) => {
               username: r.name,
               createdAt: r.createdAt,
               accessToken,
-              todos: r.todos,
               userId: r._id,
             },
           });
@@ -85,17 +87,30 @@ userRouter.post("/signin", (req, res, next) => {
     });
 });
 
-userRouter.post("/verify", function (req, res, next) {
-  const splitArray = req.headers.authorization.split(` `);
+userRouter.post("/verify", async function (req, res, next) {
+  const splitArray = req.headers[`authorization`].split(` `);
   const token = splitArray[1];
   console.log(splitArray[1]);
   const result = jwt.verify(token);
   if (result.ok) {
-    res.status(200).send({
-      status: 200,
-      msg: "Signin Success",
-      data: { email: result.email, username: result.username },
-    });
+    try {
+      const isFindUser = await userModel.findOne({ email: result.email });
+      if (!isFindUser)
+        return res
+          .status(404)
+          .send({ status: 404, message: "not found user!" });
+
+      const {_id,name,email,createdAt} = isFindUser
+      console.log("이잉", isFindUser);
+      return res.status(200).send({
+        status: 200,
+        msg: "Signin Success",
+        data: {userId: _id, email, username:name,createdAt },
+        result,
+      });
+    } catch (err) {
+      return res.status(500).send({ status: 500, err });
+    }
   } else {
     res.status(401).send({ status: 401, msg: result.message });
   }

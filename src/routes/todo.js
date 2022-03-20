@@ -58,22 +58,25 @@ todoRouter.post("/create", function (req, res, next) {
 
 todoRouter.post("/read", function (req, res, next) {
   const {
-    body: { token, userId },
+    body: { userId },
   } = req;
+  const splitArray = req.headers[`authorization`].split(` `);
+  const access_token = splitArray[1];
+  console.log("아이시발", userId);
 
-  const result = jwt.verify(token);
+  const result = jwt.verify(access_token);
   if (!result.ok) {
     res.status(401).send({ status: 401, msg: result.message });
   }
   todoModel
     .find({ creatorId: userId })
-    .populate("creatorId")
+    .populate({ path: "creatorId", select: ["_id", "email", "name"] })
     .then((r) => {
-
+      console.log("왜없어", r);
       res.status(200).send({ status: 200, msg: "찾기 완료", data: r });
     })
     .catch((e) => {
-      console.log( e);
+      console.log(e);
     });
 });
 
@@ -81,7 +84,7 @@ todoRouter.post("/findcurrmonth", function (req, res, next) {
   const {
     body: { userId, year, month, date },
   } = req;
-
+  console.log("zzzㅋㅋ", userId, year, month, date);
   const newDate = new Date();
   const utc = newDate.getTime() + newDate.getTimezoneOffset() * -1 * 60 * 1000;
   const curr = new Date(utc);
