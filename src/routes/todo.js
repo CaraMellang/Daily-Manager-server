@@ -11,8 +11,11 @@ const todoRouter = express.Router();
 
 todoRouter.post("/create", function (req, res, next) {
   const {
-    body: { token, todo },
+    body: { todo },
   } = req;
+
+  const splitArray = req.headers[`authorization`].split(` `);
+  const token = splitArray[1];
   let email = "";
   const result = jwt.verify(token);
   if (result.ok) {
@@ -35,9 +38,7 @@ todoRouter.post("/create", function (req, res, next) {
         todoModel
           .findOne({ _id: rr._id })
           .populate("creatorId")
-          .then((rss) => {
-            console.log("사랑해", rss);
-          }) //참조 완료!!
+          .then((rss) => {}) //참조 완료!!
           .catch((e) => console.log(e));
         res.status(200).send({ data: rr, msg: "완료" });
         next();
@@ -62,7 +63,6 @@ todoRouter.post("/read", function (req, res, next) {
   } = req;
   const splitArray = req.headers[`authorization`].split(` `);
   const access_token = splitArray[1];
-  console.log("아이시발", userId);
 
   const result = jwt.verify(access_token);
   if (!result.ok) {
@@ -72,7 +72,6 @@ todoRouter.post("/read", function (req, res, next) {
     .find({ creatorId: userId })
     .populate({ path: "creatorId", select: ["_id", "email", "name"] })
     .then((r) => {
-      console.log("왜없어", r);
       res.status(200).send({ status: 200, msg: "찾기 완료", data: r });
     })
     .catch((e) => {
@@ -95,13 +94,14 @@ todoRouter.post("/findcurrmonth", function (req, res, next) {
   todoModel
     .find({ creatorId: userId })
     .then((rr) => {
+      console.log("rr", rr);
       const dataArray = [];
       rr.forEach((arr) => {
         if (arr.createdAt.getUTCMonth() + 1 === month) {
           dataArray.push(arr);
         }
       });
-      console.log("dataArray", dataArray);
+      // console.log("dataArray", dataArray);
       return res
         .status(200)
         .send({ status: 200, msg: "완료", data: dataArray });
@@ -114,9 +114,11 @@ todoRouter.post("/findcurrmonth", function (req, res, next) {
 
 todoRouter.patch("/updatetodo", function (req, res, next) {
   const {
-    body: { token, todoId, todo, success },
+    body: { todoId, todo, success },
   } = req;
-  const result = jwt.verify(token);
+  const splitArray = req.headers[`authorization`].split(` `);
+  const access_token = splitArray[1];
+  const result = jwt.verify(access_token);
   if (!result.ok) {
     res.status(401).send({ status: 401, msg: result.message });
   }
@@ -142,9 +144,12 @@ todoRouter.patch("/updatetodo", function (req, res, next) {
 
 todoRouter.patch(`/updatesuc`, function (req, res, next) {
   const {
-    body: { token, todoId, success },
+    body: { todoId, success },
   } = req;
-  const result = jwt.verify(token);
+
+  const splitArray = req.headers[`authorization`].split(` `);
+  const access_token = splitArray[1];
+  const result = jwt.verify(access_token);
   if (!result.ok) {
     res.status(401).send({ status: 401, msg: result.message });
   }
@@ -169,10 +174,13 @@ todoRouter.patch(`/updatesuc`, function (req, res, next) {
 
 todoRouter.delete("/delete", function (req, res, next) {
   const {
-    body: { token, todoId },
+    body: { todoId },
   } = req;
 
-  const result = jwt.verify(token);
+  const splitArray = req.headers[`authorization`].split(` `);
+  const access_token = splitArray[1];
+  const result = jwt.verify(access_token);
+  // console.log("작동완료", result, access_token);
   if (!result.ok) {
     res.status(401).send({ status: 401, msg: result.message });
   } else {
