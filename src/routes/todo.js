@@ -33,28 +33,16 @@ todoRouter.post("/create", function (req, res, next) {
         creatorId: r._id,
         todo,
         createdAt: curr,
+        updatedAt: null,
       });
       Todo.save().then((rr) => {
-        todoModel
-          .findOne({ _id: rr._id })
-          .populate("creatorId")
-          .then((rss) => {}) //참조 완료!!
-          .catch((e) => console.log(e));
-        res.status(200).send({ data: rr, msg: "완료" });
-        next();
+        return res.status(200).send({ data: rr, msg: "완료" });
       });
     })
     .catch((e) => {
       console.log(e);
+      return res.status(500).send({ status: 500, msg: "오류", e });
     });
-  //   const Todo = new todoModel({
-  //     creator,
-  //     todo,
-  //   });
-  //   Todo.save().then((r) => {
-  //     console.log(r);
-  //     res.send(r);
-  //   });
 });
 
 todoRouter.post("/read", function (req, res, next) {
@@ -72,10 +60,11 @@ todoRouter.post("/read", function (req, res, next) {
     .find({ creatorId: userId })
     .populate({ path: "creatorId", select: ["_id", "email", "name"] })
     .then((r) => {
-      res.status(200).send({ status: 200, msg: "찾기 완료", data: r });
+      return res.status(200).send({ status: 200, msg: "찾기 완료", data: r });
     })
     .catch((e) => {
       console.log(e);
+      return res.status(500).send({ status: 500, msg: "오류", e });
     });
 });
 
@@ -83,25 +72,19 @@ todoRouter.post("/findcurrmonth", function (req, res, next) {
   const {
     body: { userId, year, month, date },
   } = req;
-  console.log("zzzㅋㅋ", userId, year, month, date);
   const newDate = new Date();
   const utc = newDate.getTime() + newDate.getTimezoneOffset() * -1 * 60 * 1000;
   const curr = new Date(utc);
-  console.log("curr", curr, month);
   curr.setUTCMonth(month + 1);
-  console.log("curr", curr);
-  console.log("아니", userId, year, curr.getUTCMonth(), month, date);
   todoModel
     .find({ creatorId: userId })
     .then((rr) => {
-      console.log("rr", rr);
       const dataArray = [];
       rr.forEach((arr) => {
         if (arr.createdAt.getUTCMonth() + 1 === month) {
           dataArray.push(arr);
         }
       });
-      // console.log("dataArray", dataArray);
       return res
         .status(200)
         .send({ status: 200, msg: "완료", data: dataArray });
@@ -133,12 +116,13 @@ todoRouter.patch("/updatetodo", function (req, res, next) {
       { $set: { todo: todo, success: success, updatedAt: curr } }
     )
     .then((r) => {
-      res
+      return res
         .status(200)
         .send({ status: 200, msg: "성공적으로 업데이트 하였습니다", data: r });
     })
     .catch((e) => {
       console.log(e);
+      return res.status(500).send({ status: 500, msg: "오류", e });
     });
 });
 
@@ -163,12 +147,13 @@ todoRouter.patch(`/updatesuc`, function (req, res, next) {
       { $set: { success: !success, updatedAt: curr } }
     )
     .then((r) => {
-      res
+      return res
         .status(200)
         .send({ status: 200, msg: "성공적으로 업데이트 하였습니다", data: r });
     })
     .catch((e) => {
       console.log(e);
+      return res.status(500).send({status:500, msg:"오류",e})
     });
 });
 
@@ -180,20 +165,19 @@ todoRouter.delete("/delete", function (req, res, next) {
   const splitArray = req.headers[`authorization`].split(` `);
   const access_token = splitArray[1];
   const result = jwt.verify(access_token);
-  // console.log("작동완료", result, access_token);
   if (!result.ok) {
     res.status(401).send({ status: 401, msg: result.message });
   } else {
     todoModel
       .deleteOne({ _id: todoId })
       .then((r) => {
-        res
+        return res
           .status(200)
           .send({ status: 200, msg: "삭제 완료되었습니다", data: r });
       })
       .catch((e) => {
         console.log(e);
-        next();
+        return res.status(500).send({status:500, msg:"오류",e})
       });
   }
 });

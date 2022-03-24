@@ -20,7 +20,6 @@ export default {
     let decoded = null;
     try {
       decoded = jwt.verify(token, secret);
-      console.log("디코디드", decoded);
       return {
         ok: true,
         email: decoded.email,

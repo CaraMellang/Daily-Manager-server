@@ -11,6 +11,11 @@ userRouter.post("/signup", (req, res) => {
   const {
     body: { username, email, password },
   } = req;
+
+  if (!username || !email || !password) {
+    return res.status(500).send({ status: 500, msg: "save Error" });
+  }
+
   const date = new Date();
   const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
   const curr = new Date(utc);
@@ -28,17 +33,20 @@ userRouter.post("/signup", (req, res) => {
         res.status(400).send({ status: 400, message: "invailed email!" });
         throw Error("이미있습니다!");
       }
-      try {
-        User.save();
-        console.log("저장완료");
-        res.status(200).send({ status: 200, message: "success" });
-      } catch (e) {
-        console.log("저장에러", e);
-        res.status(403).send({ status: false, message: "save error" });
-      }
+      User.save()
+        .then(() => {
+          return res.status(200).send({ status: 200, message: "success" });
+        })
+        .catch((err) => {
+          console.log("저장에러", err);
+          return res
+            .status(500)
+            .send({ status: 500, message: "save error", err });
+        });
     })
     .catch((e) => {
       console.log("사인업 findOne Error", e);
+      return res.status(500).send({ status: 500, msg: "오류", e });
     });
 });
 
@@ -100,12 +108,11 @@ userRouter.post("/verify", async function (req, res, next) {
           .status(404)
           .send({ status: 404, message: "not found user!" });
 
-      const {_id,name,email,createdAt} = isFindUser
-      console.log("이잉", isFindUser);
+      const { _id, name, email, createdAt } = isFindUser;
       return res.status(200).send({
         status: 200,
         msg: "Signin Success",
-        data: {userId: _id, email, username:name,createdAt },
+        data: { userId: _id, email, username: name, createdAt },
         result,
       });
     } catch (err) {
@@ -117,4 +124,3 @@ userRouter.post("/verify", async function (req, res, next) {
   console.log(result);
 });
 export default userRouter;
-// module.exports = router;
