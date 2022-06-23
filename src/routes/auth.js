@@ -16,9 +16,15 @@ userRouter.post("/signup", (req, res) => {
     return res.status(500).send({ status: 500, msg: "save Error" });
   }
 
-  const date = new Date();
-  const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
-  const curr = new Date(utc);
+  let curr;
+  if (process.env.NODE_ENV === "development") {
+    curr = new Date();
+  } else {
+    const date = new Date();
+    const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+    curr = new Date(utc);
+  }
+
   const User = new userModel({
     name: username,
     email,

@@ -26,9 +26,15 @@ todoRouter.post("/create", function (req, res, next) {
   userModel
     .findOne({ email })
     .then((r) => {
-      const date = new Date();
-      const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
-      const curr = new Date(utc);
+      let curr;
+      if (process.env.NODE_ENV === "development") {
+        curr = new Date();
+      } else {
+        const date = new Date();
+        const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+        curr = new Date(utc);
+      }
+
       const Todo = new todoModel({
         creatorId: r._id,
         todo,
@@ -106,9 +112,14 @@ todoRouter.patch("/updatetodo", function (req, res, next) {
     res.status(401).send({ status: 401, msg: result.message });
   }
 
-  const date = new Date();
-  const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
-  const curr = new Date(utc);
+  let curr;
+  if (process.env.NODE_ENV === "development") {
+    curr = new Date();
+  } else {
+    const date = new Date();
+    const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+    curr = new Date(utc);
+  }
 
   todoModel
     .updateOne(
@@ -138,9 +149,15 @@ todoRouter.patch(`/updatesuc`, function (req, res, next) {
     res.status(401).send({ status: 401, msg: result.message });
   }
 
-  const date = new Date();
-  const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
-  const curr = new Date(utc);
+  let curr;
+  if (process.env.NODE_ENV === "development") {
+    curr = new Date();
+  } else {
+    const date = new Date();
+    const utc = date.getTime() + date.getTimezoneOffset() * -1 * 60 * 1000;
+    curr = new Date(utc);
+  }
+
   todoModel
     .updateOne(
       { _id: todoId },
@@ -153,7 +170,7 @@ todoRouter.patch(`/updatesuc`, function (req, res, next) {
     })
     .catch((e) => {
       console.log(e);
-      return res.status(500).send({status:500, msg:"오류",e})
+      return res.status(500).send({ status: 500, msg: "오류", e });
     });
 });
 
@@ -177,7 +194,7 @@ todoRouter.delete("/delete", function (req, res, next) {
       })
       .catch((e) => {
         console.log(e);
-        return res.status(500).send({status:500, msg:"오류",e})
+        return res.status(500).send({ status: 500, msg: "오류", e });
       });
   }
 });
